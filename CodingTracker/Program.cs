@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-
-class Program
+﻿class Program
 {
     static void Main(string[] args)
     {
