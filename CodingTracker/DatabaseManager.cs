@@ -1,62 +1,31 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
-using System;
+using System.Collections.Specialized;
 using System.Configuration;
 
 namespace CodingTracker
 {
     internal class DatabaseManager
     {
-        private readonly string connectionString ;
+        private string connectionString;
 
         public DatabaseManager()
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddXmlFile("app.config", optional: true, reloadOnChange: true)
-                .Build();
-
-            var connectionStrings = config.GetSection("connectionStrings");
-
-            if (connectionStrings != null )
-            {
-                throw new InvalidOperationException("ConnectionStrings section not found in app.config.");
-            }
-
-            var firstConnectionString = connectionStrings.GetChildren().FirstOrDefault();
-            string connStrName = firstConnectionString?.Key;
-
-            if (string.IsNullOrEmpty(connStrName))
-            {
-                throw new InvalidOperationException("No connection string found in app.config.");
-            }
-
-            string connString = firstConnectionString?.Value;
-
-            if (string.IsNullOrEmpty(connString))
-            {
-                throw new InvalidOperationException($"Connection string '{connStrName}' not found in app.config.");
-            }
-
-            var builder = new SqliteConnectionStringBuilder(connString);
-            string dbName = builder.DataSource;
-
-            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dbName);
-            connectionString = $"Data Source={dbPath}";
-
-            InitializeDatabase();
+            // Retrieve the connection string named "MySQLiteConnection" from app.config
+            connectionString = ConfigurationManager.ConnectionStrings["MySQLiteConnection"].ConnectionString;
         }
 
-        private void InitializeDatabase()
+        public void CreateDatabase()
         {
-            if (!File.Exists(connectionString)) // Check if the database file exists
+            // Use the retrieved connection string to create a SQLite database
+            using (var connection = new SqliteConnection(connectionString))
             {
-                // If the database doesn't exist, create it
-                using (var connection = new SqliteConnection(connectionString))
+                try
                 {
                     connection.Open();
+                    // Perform any database initialization or setup here if needed
+                    Console.WriteLine("Connected to SQLite database successfully!");
 
-                    // SQL command to create a table (replace this with your table creation script)
+                    // Create the 'tracker' table if it doesn't exist
                     string createTableQuery = @"
                         CREATE TABLE IF NOT EXISTS tracker (
                             ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -68,7 +37,13 @@ namespace CodingTracker
                     using (var command = new SqliteCommand(createTableQuery, connection))
                     {
                         command.ExecuteNonQuery();
+                        Console.WriteLine("Tracker table created successfully!");
                     }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error connecting to SQLite database: " + ex.Message);
+                    // Handle the exception or log it as needed
                 }
             }
         }
