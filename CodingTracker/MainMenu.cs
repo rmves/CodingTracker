@@ -6,9 +6,8 @@ namespace CodingTracker
     {
         public static void DisplayMenu()
         {
-            int userInput;
 
-            do
+            while (true)
             {
                 Console.WriteLine("Welcome to the Main Menu");
                 Console.WriteLine("0 - Close Application");
@@ -17,7 +16,7 @@ namespace CodingTracker
                 Console.WriteLine("3 - Update Data");
                 Console.WriteLine("4 - Delete Data");
 
-                userInput = UserInput.GetIntegerInput("Select an option from the list above: ");
+                int userInput = UserInput.GetIntegerInput("Select an option from the list above: ");
 
                 switch (userInput)
                 {
@@ -25,22 +24,34 @@ namespace CodingTracker
                         Environment.Exit(0);
                         break;
                     case 1:
+                        Console.Clear();
                         DatabaseManager.ViewAllRecords();
+                        ReturnToMainMenu();
                         break;
                     case 2:
-                        Console.WriteLine("Insert");
+                        Console.Clear();
+                        DatabaseManager.Insert();
                         break;
                     case 3:
-                        Console.WriteLine("Update");
+                        Console.Clear();
+                        DatabaseManager.Update();
                         break;
                     case 4:
-                        Console.WriteLine("Delete");
+                        Console.Clear();
+                        DatabaseManager.Delete();
                         break;
                     default:
                         Console.WriteLine("Invalid option. Please choose a valid option.");
                         break;
                 }
-            } while (userInput != 0);
+            }
+        }
+
+        public static void ReturnToMainMenu()
+        {
+            Console.WriteLine("Press any key to return to the main menu...");
+            Console.ReadKey();
+            Console.Clear();
         }
     }
 }

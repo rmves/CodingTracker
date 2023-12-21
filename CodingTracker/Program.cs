@@ -4,8 +4,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        DatabaseManager dbManager = new DatabaseManager();
-        dbManager.CreateDatabase();
+        DatabaseManager.CreateDatabase();
 
         MainMenu. DisplayMenu();
     }
