@@ -6,5 +6,7 @@ class Program
     {
         DatabaseManager dbManager = new DatabaseManager();
         dbManager.CreateDatabase();
+
+        MainMenu. DisplayMenu();
     }
 }
