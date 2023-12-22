@@ -27,8 +27,6 @@ namespace CodingTracker
                         Console.Clear();
                         var sessions = DatabaseManager.GetAllSessions();
                         DatabaseManager.DisplaySessions(sessions);
-                        //DatabaseManager.ViewAllRecords();
-                        //DatabaseManager.GetAllSessions();
                         ReturnToMainMenu();
                         break;
                     case 2:
